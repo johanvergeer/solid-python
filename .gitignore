@@ -241,3 +241,5 @@ Temporary Items
 [Ss]cripts
 pyvenv.cfg
 pip-selfcheck.json
+
+**/products.csv
