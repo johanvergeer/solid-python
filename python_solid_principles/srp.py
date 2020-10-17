@@ -61,13 +61,13 @@ def calculate_price(product):
 
 
 def calculate_price(
-        product_name: str,
-        price: float,
-        on_sale: bool,
-        for_free: bool,
-        calculation_method: str,
-        country_of_origin: str,
-        related_product_ids: str
+    product_name: str,
+    price: float,
+    on_sale: bool,
+    for_free: bool,
+    calculation_method: str,
+    country_of_origin: str,
+    related_product_ids: str,
 ) -> float:
     ...
 

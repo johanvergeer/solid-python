@@ -1,8 +1,5 @@
-import csv
 import logging
-import shutil
-from pathlib import Path
-from typing import Dict, Union
+import sqlite3
 
 logger = logging.getLogger(__name__)
 
@@ -17,47 +14,28 @@ class Product:
     def id(self):
         return self.__id
 
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "country_of_origin": self.country_of_origin,
-        }
-
     def save(self):
-        products_file_path = Path() / "products.csv"
-        backup_path = Path() / "products.csv.bak"
-        fieldnames = [key for key in self.as_dict()]
-        products: Dict[int, Dict[str, Union[str, int]]] = {}
+        conn = sqlite3.connect("products.db")
 
-        try:
-            with open(products_file_path) as products_file:
-                product_reader = csv.DictReader(products_file, fieldnames=fieldnames)
-                next(product_reader, None)  # Skip the headers
+        cur = conn.cursor()
+        cur.execute("SELECT EXISTS(SELECT 1 FROM products WHERE id=?)", (self.id,))
 
-                products = {int(p["id"]): p for p in product_reader}
+        with conn:
+            if cur.fetchone()[0]:
+                logger.info(f"Product with id {self.id} found in database. Updating...")
+                update_sql = """UPDATE products
+                                SET name=?, country_of_origin=?
+                                WHERE id=?"""
+                cur.execute(update_sql, (self.name, self.country_of_origin, self.id))
+            else:
+                logger.info(f"Adding new product with id {self.id} to database")
+                insert_sql = """INSERT INTO products(id, name, country_of_origin)
+                                VALUES (?,?,?)"""
+                cur.execute(insert_sql, (self.id, self.name, self.country_of_origin))
 
-            # Create backup of current csv file
-            shutil.copy(products_file_path, backup_path)
-        except FileNotFoundError:
-            logger.info("Products file doesn't exist.")
-            logger.info("Creating new products file.")
-
-        # Add or replace product in list
-        products[self.id] = self.as_dict()
-
-        with open(products_file_path, "w+") as products_file:
-            product_writer = csv.DictWriter(products_file, fieldnames=fieldnames)
-
-            product_writer.writeheader()
-
-            for _, product in products.items():
-                product_writer.writerow(product)
-
-        # Remove the backup after saving the file succeeded.
-        backup_path.unlink()
+        conn.close()
 
 
-if __name__ == '__main__':
-    p = Product(3, "hamburger", "NL")
+if __name__ == "__main__":
+    p = Product(1, "ham", "NL")
     p.save()
