@@ -61,45 +61,63 @@ class ElectronicProduct(Product):
 
 
 def calculate_total_taxes(product: Product) -> float:
+    calculators = tax_calculator_factory(product)
+
+    if calculators is None:
+        raise ValueError("Unable to calculate tax for product.")
+
+    total_tax = 0
+    for calculator in calculators:
+        total_tax += calculator(product)
+
+    return total_tax
+
+
+def tax_calculator_factory(product: Product):
     if isinstance(product, Drink):
-        if product.type == DrinkType.BEER:
-            if product.alcohol_percentage > 0.5:
-                vat = product.price * 0.21
-            else:
-                vat = product.price * 0.09
-        elif product.type == DrinkType.DISTILLED:
+        return [calculate_drinks_vat]
+    if isinstance(product, ElectronicProduct):
+        return [calculate_vat_high, calculate_home_copy_tax]
+
+
+def calculate_drinks_vat(product: Drink):
+    if product.type == DrinkType.BEER:
+        if product.alcohol_percentage > 0.5:
             vat = product.price * 0.21
-        elif product.type == DrinkType.WINE:
-            if product.alcohol_percentage > 1.2:
-                vat = product.price * 0.21
-            else:
-                vat = product.price * 0.09
         else:
-            raise ValueError(f"Cannot calculate vat for {product.type.value}")
-
-        return vat
-
-    elif isinstance(product, ElectronicProduct):
+            vat = product.price * 0.09
+    elif product.type == DrinkType.DISTILLED:
         vat = product.price * 0.21
-
-        if product.type == ElectronicProductType.E_READER:
-            home_copy_tax = 0.8
-        elif product.type == ElectronicProductType.EXTERNAL_HDD:
-            home_copy_tax = 0.6
-        elif product.type == ElectronicProductType.SMARTPHONE:
-            home_copy_tax = 4.7
-        elif product.type == ElectronicProductType.TABLET:
-            home_copy_tax = 2.6
-        elif product.type == ElectronicProductType.PC:
-            home_copy_tax = 2.6
+    elif product.type == DrinkType.WINE:
+        if product.alcohol_percentage > 1.2:
+            vat = product.price * 0.21
         else:
-            raise ValueError(
-                f"Cannot calculate home copy tax for a {product.type.value}"
-            )
+            vat = product.price * 0.09
+    else:
+        raise ValueError(f"Cannot calculate vat for {product.type.value}")
 
-        return vat + home_copy_tax
+    return vat
 
-    raise ValueError("Unable to calculate tax for product.")
+
+def calculate_vat_high(product: Product):
+    return product.price * 0.21
+
+
+def calculate_home_copy_tax(product: ElectronicProduct):
+    if product.type == ElectronicProductType.E_READER:
+        return 0.8
+    elif product.type == ElectronicProductType.EXTERNAL_HDD:
+        return 0.6
+    elif product.type == ElectronicProductType.SMARTPHONE:
+        return 4.7
+    elif product.type == ElectronicProductType.TABLET:
+        return 2.6
+    elif product.type == ElectronicProductType.PC:
+        return 2.6
+    else:
+        raise ValueError(
+            f"Cannot calculate home copy tax for a {product.type.value}"
+        )
 
 
 class ProductRepository:
