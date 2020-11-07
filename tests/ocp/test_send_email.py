@@ -4,13 +4,13 @@ from unittest.mock import patch
 import pytest
 
 from python_solid_principles.ocp.send_email import (
-    format_to_plain_text,
-    read_lines_from_file,
-    User,
-    get_sender_data,
-    get_receiver_email_addresses,
-    send_email,
     SMTP_SSL,
+    User,
+    format_to_plain_text,
+    get_receiver_email_addresses,
+    get_sender_data,
+    read_lines_from_file,
+    send_email,
 )
 
 

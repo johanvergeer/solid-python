@@ -1,7 +1,7 @@
 import logging
+from pathlib import Path
 from smtplib import SMTP_SSL
 from ssl import create_default_context
-from pathlib import Path
 from typing import List, Set
 
 from attr import dataclass

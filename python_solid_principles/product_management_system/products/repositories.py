@@ -1,19 +1,10 @@
-import logging
-import sqlite3
 from sqlite3 import Connection
+import logging
+
+from python_solid_principles.product_management_system.products.entities import Product
+
 
 logger = logging.getLogger(__name__)
-
-
-class Product:
-    def __init__(self, id_: int, name: str, country_of_origin: str):
-        self.__id = id_
-        self.name = name
-        self.country_of_origin = country_of_origin
-
-    @property
-    def id(self):
-        return self.__id
 
 
 class ProductRepository:
@@ -34,9 +25,12 @@ class ProductRepository:
              sqlite3.IntegrityError: when a product with the same id already exists
         """
         cur = self.connection.cursor()
-        insert_sql = """INSERT INTO products(id, name, country_of_origin)
-                        VALUES (?,?,?)"""
-        cur.execute(insert_sql, (product.id, product.name, product.country_of_origin))
+        insert_sql = """INSERT INTO products(id, name, country_of_origin, price)
+                        VALUES (?,?,?, ?)"""
+        cur.execute(
+            insert_sql,
+            (product.id, product.name, product.country_of_origin, product.price),
+        )
 
     def update(self, product: Product) -> None:
         """Updates a product in the database with the given id
@@ -47,9 +41,12 @@ class ProductRepository:
         """
         cur = self.connection.cursor()
         update_sql = """UPDATE products
-                        SET name=?, country_of_origin=?
+                        SET name=?, country_of_origin=?, price=?
                         WHERE id=?"""
-        cur.execute(update_sql, (product.name, product.country_of_origin, product.id))
+        cur.execute(
+            update_sql,
+            (product.name, product.country_of_origin, product.id, product.price),
+        )
 
     def add_or_update(self, product: Product) -> None:
         """Adds the product to the database if no product with the
@@ -61,28 +58,3 @@ class ProductRepository:
         else:
             logger.info(f"Adding new product with id {product.id} to database")
             self.add(product)
-
-
-"""
-1. Extract save method to ProductRepository
-2. Move conn to ProductRepository init
-3. Extract method to check whether product exists
-4. Extract add method
-5. Extract update method
-6. Rename 'save' to 'add_or_update'
-
-When add is called and the product already exists in the database,
-an exception is raised. Same for update, but the other way around
-"""
-
-if __name__ == "__main__":
-    p = Product(1, "friet", "NL")
-    connection = sqlite3.connect("products.db")
-    pr = ProductRepository(connection)
-
-    pr.update(p)
-    pr.add(Product(10, "foo", "NL"))
-
-    connection.commit()
-
-    connection.close()

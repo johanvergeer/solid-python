@@ -1,8 +1,8 @@
+import logging
+import smtplib
+import ssl
 from pathlib import Path
 from typing import List
-
-import logging
-import smtplib, ssl
 
 logger = logging.getLogger(__name__)
 
