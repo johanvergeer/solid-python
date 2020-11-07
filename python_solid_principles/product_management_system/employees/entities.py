@@ -15,5 +15,6 @@ class Employee:
     def name(self):
         return self.__name
 
+    @property
     def manager(self):
         return self.__manager
