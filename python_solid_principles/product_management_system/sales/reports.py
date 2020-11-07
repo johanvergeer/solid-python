@@ -12,8 +12,13 @@ def create_sales_report(
     to_date: date,
     sales_repository: SalesRepository,
     requested_by: Literal["sales_manager, ceo"] = "sales_manager",
+    minimum_sale_threshold: Optional[int] = None,
 ):
     sales = sales_repository.find_from_to_date(from_date, to_date)
+
+    if requested_by == "ceo" and minimum_sale_threshold is not None:
+        sales = [s for s in sales if s.total >= minimum_sale_threshold]
+
     sales_total = "€ " + "{:.2f}".format(sum([s.total for s in sales])).rjust(7)
 
     report = ""

@@ -147,3 +147,52 @@ Total:                                                                {sales_tot
         report_file.write(report)
 
     assert report == expected
+
+
+def test_multiple_sales__for_ceo__skip_sales_below_threshold(sales_repo_mock):
+    from_date = datetime.now()
+    to_date = datetime.now()
+    manager_1 = EmployeeFactory(name="manager_1")
+    manager_2 = EmployeeFactory(name="manager_2")
+
+    sale_1: Sale = SaleFactory(
+        product__name="product_1",
+        product__price=100,
+        sold_by__manager=manager_1,
+        quantity=2,
+    )  # Total sale price is 200, so this sale should be included in the report
+    sale_2: Sale = SaleFactory(
+        product__name="product_2",
+        product__price=10,
+        sold_by__manager=manager_2,
+        quantity=10,
+    )  # Total sale price is 100, so this sale should not be included in the report
+    sale_3: Sale = SaleFactory(
+        product__name="product_3",
+        product__price=100,
+        sold_by__manager=manager_1,
+        quantity=3,
+    )  # Total sale price is 300, so this sale should be included in the report
+    sales = {sale_1, sale_2, sale_3}
+    sales_repo_mock.find_from_to_date.return_value = sales
+
+    report = create_sales_report(
+        from_date, to_date, sales_repo_mock, "ceo", minimum_sale_threshold=200
+    )
+
+    sales_total = "€ " + "{:.2f}".format(sum([sale_1.total, sale_3.total])).rjust(7)
+
+    expected = f"""
+Sales Manager      Date        Product            Price     Quantity  Total
+-------------      ----        -------            -------   --------  ------------
+{_format_sale_line_for_ceo(sale_1, include_manager=True)}
+{_format_sale_line_for_ceo(sale_3, include_manager=False)}
+
+----------------------------------------------------------------------------------
+Total:                                                                {sales_total}
+    """.strip()
+
+    with (Path() / "report.txt").open("w+") as report_file:
+        report_file.write(report)
+
+    assert report == expected
