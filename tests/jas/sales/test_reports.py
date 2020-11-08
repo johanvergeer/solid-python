@@ -3,14 +3,14 @@ from pathlib import Path
 
 import pytest
 
-from python_solid_principles.product_management_system.sales.entities import Sale
-from python_solid_principles.product_management_system.sales.reports import (
+from python_solid_principles.jas.sales.entities import Sale
+from python_solid_principles.jas.sales.reports import (
     create_sales_report,
 )
-from python_solid_principles.product_management_system.sales.repositories import (
+from python_solid_principles.jas.sales.repositories import (
     SalesRepository,
 )
-from tests.factories import SaleFactory, EmployeeFactory
+from tests.jas.factories import SaleFactory, EmployeeFactory
 
 
 @pytest.fixture

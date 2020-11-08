@@ -2,7 +2,7 @@ from datetime import date
 from itertools import groupby
 from typing import Literal, Optional
 
-from python_solid_principles.product_management_system.sales.repositories import (
+from python_solid_principles.jas.sales.repositories import (
     SalesRepository,
 )
 

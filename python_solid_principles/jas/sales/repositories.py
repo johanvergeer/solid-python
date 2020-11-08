@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Protocol, Set
 
-from python_solid_principles.product_management_system.sales.entities import Sale
+from python_solid_principles.jas.sales.entities import Sale
 
 
 class SalesRepository(Protocol):

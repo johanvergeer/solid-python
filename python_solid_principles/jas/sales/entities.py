@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from python_solid_principles.product_management_system.employees.entities import (
+from python_solid_principles.jas.employees.entities import (
     Employee,
 )
-from python_solid_principles.product_management_system.products.entities import Product
+from python_solid_principles.jas.products.entities import Product
 
 
 class Sale:

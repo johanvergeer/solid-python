@@ -1,7 +1,7 @@
 from sqlite3 import Connection
 import logging
 
-from python_solid_principles.product_management_system.products.entities import Product
+from python_solid_principles.jas.products.entities import Product
 
 
 logger = logging.getLogger(__name__)
