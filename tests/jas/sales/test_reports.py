@@ -50,7 +50,7 @@ def test_one_sale(sales_repo_mock):
     product_name = sale.product.name[:18].ljust(18)
     sale_date = str(sale.time_of_sale).ljust(11)
     sold_by = sale.sold_by.name[:15].ljust(15)
-    price = "€ " + "{:.2f}".format(sale.product.price).ljust(7)
+    price = "€ " + "{:.2f}".format(sale.product.price).rjust(7)
     quantity = str(sale.quantity).ljust(9)
     sale_total = "€ " + "{:.2f}".format(sale.total).rjust(7)
 
@@ -109,7 +109,7 @@ def _format_sale_line_for_ceo(sale: Sale, include_manager: bool = True) -> str:
         sales_manager = "".ljust(18)
     sale_date = str(sale.time_of_sale).ljust(11)
     product_name = sale.product.name[:18].ljust(18)
-    price = "€ " + "{:.2f}".format(sale.product.price).ljust(7)
+    price = "€ " + "{:.2f}".format(sale.product.price).rjust(7)
     quantity = str(sale.quantity).ljust(9)
     sale_total = "€ " + "{:.2f}".format(sale.total).rjust(7)
 

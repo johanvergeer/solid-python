@@ -2,6 +2,7 @@ from datetime import date
 from itertools import groupby
 from typing import Literal, Optional
 
+from python_solid_principles.jas.formatting import format_amount
 from python_solid_principles.jas.sales.repositories import (
     SalesRepository,
 )
@@ -23,7 +24,7 @@ def create_sales_report(
         sales = [s for s in sales if s.total >= minimum_sale_threshold]
 
     # Get the sales total for all sales
-    sales_total = "€ " + "{:.2f}".format(sum([s.total for s in sales])).rjust(7)
+    sales_total = format_amount(sum([s.total for s in sales]))
 
     # Initialize the 'report' string
     report = ""
@@ -59,9 +60,9 @@ Sales Manager      Date        Product            Price     Quantity  Total
                 # Format values
                 sale_date = str(sale.time_of_sale).ljust(11)
                 sold_by = sale.sold_by.name[:15].ljust(15)
-                price = "€ " + "{:.2f}".format(sale.product.price).ljust(7)
+                price = format_amount(sale.product.price)
                 quantity = str(sale.quantity).ljust(9)
-                sale_total = "€ " + "{:.2f}".format(sale.total).rjust(7)
+                sale_total = format_amount(sale.total)
 
                 # Add the sale to the report
                 report += f"\n{product_name} {sale_date} {sold_by} {price} {quantity} {sale_total}"
@@ -81,9 +82,9 @@ Sales Manager      Date        Product            Price     Quantity  Total
                 # Format values
                 sale_date = str(sale.time_of_sale).ljust(11)
                 product_name = sale.product.name.ljust(18)
-                price = "€ " + "{:.2f}".format(sale.product.price).ljust(7)
+                price = format_amount(sale.product.price)
                 quantity = str(sale.quantity).ljust(9)
-                sale_total = "€ " + "{:.2f}".format(sale.total).rjust(7)
+                sale_total = format_amount(sale.total)
 
                 # Add the sale to the report
                 report += f"\n{sales_manager_name} {sale_date} {product_name} {price} {quantity} {sale_total}"
