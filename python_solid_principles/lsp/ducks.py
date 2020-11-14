@@ -1,25 +1,7 @@
-from abc import ABC, abstractmethod
+from typing import List, Any
 
 
-class Duck(ABC):
-    @abstractmethod
-    def quack(self):
-        ...
-
-    @abstractmethod
-    def walk(self):
-        ...
-
-    @abstractmethod
-    def fly(self):
-        ...
-
-    @abstractmethod
-    def land(self):
-        ...
-
-
-class Mallard(Duck):
+class Mallard:
     def quack(self):
         print("Quacking")
 
@@ -33,25 +15,12 @@ class Mallard(Duck):
         print("Landing")
 
 
-class NoFlyException(Exception):
-    pass
-
-
-class RubberDuck(Duck):
+class RubberDuck:
     def quack(self):
         print("Squeek")
 
-    def walk(self):
-        pass
 
-    def fly(self):
-        raise NoFlyException()
-
-    def land(self):
-        raise NoFlyException()
-
-
-class RoboDuck(Duck):
+class RoboDuck:
     def __init__(self):
         self.height = 0
 
@@ -65,6 +34,14 @@ class RoboDuck(Duck):
         if self.height > 500:
             self.land()
         self.height += 1
+        print(f"Increased height to {self.height} m")
 
     def land(self):
         self.height = 0
+
+
+def fly_all_ducks(ducks: List[Any]) -> None:
+    for duck in ducks:
+        fly_op = getattr(duck, "fly", None)
+        if callable(fly_op):
+            fly_op()
