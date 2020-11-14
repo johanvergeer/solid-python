@@ -33,18 +33,11 @@ class TestSquare:
         return Square(20)
 
     def test_init(self, square):
-        assert square.width == 20
-        assert square.height == 20
+        assert square.side == 20
 
-    def test_set_width(self, square):
-        square.width = 40
-        assert square.width == 40
-        assert square.height == 40
-
-    def test_set_height(self, square):
-        square.height = 40
-        assert square.height == 40
-        assert square.width == 40
+    def test_set_side(self, square):
+        square.side = 40
+        assert square.side == 40
 
     def test_area(self, square):
         assert square.area == 20 * 20

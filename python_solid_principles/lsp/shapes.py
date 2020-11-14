@@ -11,23 +11,14 @@ class Rectangle:
     def perimiter(self) -> float:
         return self.width * 2 + self.height * 2
 
-class Square(Rectangle):
+class Square:
     def __init__(self, side: float):
-        self.__side = side
-        super(Square, self).__init__(side, side)
+        self.side = side
 
     @property
-    def width(self):
-        return self.__side
-
-    @width.setter
-    def width(self, value):
-        self.__side = value
+    def area(self):
+        return self.side ** 2
 
     @property
-    def height(self):
-        return self.__side
-
-    @height.setter
-    def height(self, value):
-        self.__side = value
+    def perimiter(self):
+        return self.side * 4
