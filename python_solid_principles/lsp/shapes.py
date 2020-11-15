@@ -11,6 +11,7 @@ class Rectangle:
     def perimiter(self) -> float:
         return self.width * 2 + self.height * 2
 
+
 class Square:
     def __init__(self, side: float):
         self.side = side

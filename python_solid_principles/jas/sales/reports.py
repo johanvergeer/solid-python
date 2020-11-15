@@ -1,18 +1,28 @@
-from datetime import date
+from dataclasses import dataclass
+from datetime import date, datetime
 from itertools import groupby
-from typing import Literal, Optional, Callable, List, Tuple, Union
+from typing import Callable, List, Literal, Optional, Tuple, Union, overload
 
 from python_solid_principles.jas.formatting import (
     format_amount,
-    format_string,
-    format_date,
     format_any,
+    format_date,
+    format_string,
 )
-from python_solid_principles.jas.sales.entities import Sale
-from python_solid_principles.jas.sales.repositories import (
-    SalesRepository,
-)
+from python_solid_principles.jas.sales.entities import Sale, InternalSale, ExternalSale
+from python_solid_principles.jas.sales.repositories import SalesRepository
 
+
+
+@dataclass
+class SaleReportViewModel:
+    time_of_sale: datetime
+    product_name: str
+    product_price: float
+    quantity: int
+    total: float
+    sold_by: str = ""
+    sales_manager: str = ""
 
 class ReportField:
     def __init__(
@@ -46,15 +56,8 @@ def create_report_header(fields: List[ReportField]) -> str:
     return header
 
 
-def get_attribute_value_from_path(sale: Sale, path: str):
-    value = sale
-    for attribute in path.split("__"):
-        value = getattr(value, attribute)
-    return value
-
-
 def create_item_line(
-    fields: List[ReportField], sale: Sale, fields_to_skip: Optional[List[str]] = None
+    fields: List[ReportField], sale: SaleReportViewModel, fields_to_skip: Optional[List[str]] = None
 ) -> str:
     fields_to_skip = fields_to_skip or []
 
@@ -64,7 +67,7 @@ def create_item_line(
             report_line += " " * field.length + " "
         else:
             formatter = field.formatter or format_any
-            value = get_attribute_value_from_path(sale, field.path)
+            value = getattr(sale, field.path)
             report_line += (
                 formatter(value, field.length, **field.formatter_options) + " "
             )
@@ -73,7 +76,7 @@ def create_item_line(
 
 
 def create_item_lines(
-    fields: List[ReportField], sales: List[Sale], group_attr_path: Optional[str] = None
+    fields: List[ReportField], sales: List[SaleReportViewModel], group_attr_path: Optional[str] = None
 ):
     lines = []
     current_group_value = ""
@@ -81,7 +84,7 @@ def create_item_lines(
         if group_attr_path:
             # Items should be grouped
             if current_group_value != (
-                new_group_value := get_attribute_value_from_path(sale, group_attr_path)
+                new_group_value := getattr(sale, group_attr_path)
             ):
                 lines.append(create_item_line(fields, sale))
                 current_group_value = new_group_value
@@ -95,7 +98,7 @@ def create_item_lines(
 
 
 def create_totals_line(
-    fields: List[ReportField], sales: List[Sale], totals_column: str
+    fields: List[ReportField], sales: List[SaleReportViewModel], totals_column: str
 ) -> str:
     totals_line = format_string("Total: ", fields[0].length) + " "
 
@@ -104,7 +107,7 @@ def create_totals_line(
             totals_line += (" " * field.length) + " "
         else:
             total_amount_value = sum(
-                [get_attribute_value_from_path(s, field.path) for s in sales]
+                [getattr(s, field.path) for s in sales]
             )
             total_amount_formatted = field.formatter(
                 total_amount_value, field.length, **field.formatter_options
@@ -115,14 +118,14 @@ def create_totals_line(
     return totals_line[:-1]
 
 
-def create_sales_report_for_sales_manager(sales: List[Sale]) -> str:
-    sales = sorted(sales, key=lambda s: s.product.name)
+def create_sales_report_for_sales_manager(sales: List[SaleReportViewModel]) -> str:
+    sales = sorted(sales, key=lambda s: s.product_name)
 
     fields = [
-        ReportField("product__name", "Product", 18),
+        ReportField("product_name", "Product", 18),
         ReportField("time_of_sale", "Date", 10),
-        ReportField("sold_by__name", "Sales Person", 15),
-        ReportField("product__price", "Price", 9, formatter=format_amount),
+        ReportField("sold_by", "Sales Person", 15),
+        ReportField("product_price", "Price", 9, formatter=format_amount),
         ReportField("quantity", "Quantity", 9),
         ReportField("total", "Total", 9, formatter=format_amount),
     ]
@@ -130,7 +133,7 @@ def create_sales_report_for_sales_manager(sales: List[Sale]) -> str:
     report_lines = [
         create_report_header(fields),
         create_horizontal_line(fields),
-        create_item_lines(fields, sales, "product__name"),
+        create_item_lines(fields, sales, "product_name"),
         create_horizontal_line(fields),
         create_totals_line(fields, sales, "total"),
     ]
@@ -138,14 +141,14 @@ def create_sales_report_for_sales_manager(sales: List[Sale]) -> str:
     return "\n".join(report_lines)
 
 
-def create_sales_report_for_ceo(sales: List[Sale]) -> str:
-    sales = sorted(sales, key=lambda s: (s.sold_by.manager.name, s.product.name))
+def create_sales_report_for_ceo(sales: List[SaleReportViewModel]) -> str:
+    sales = sorted(sales, key=lambda s: (s.sold_by, s.product_name))
 
     fields = [
-        ReportField("sold_by__manager__name", "Sales Manager", 18),
+        ReportField("sales_manager", "Sales Manager", 18),
         ReportField("time_of_sale", "Date", 10),
-        ReportField("product__name", "Product", 18),
-        ReportField("product__price", "Price", 9, formatter=format_amount),
+        ReportField("product_name", "Product", 18),
+        ReportField("product_price", "Price", 9, formatter=format_amount),
         ReportField("quantity", "Quantity", 9),
         ReportField("total", "Total", 9, formatter=format_amount),
     ]
@@ -153,9 +156,30 @@ def create_sales_report_for_ceo(sales: List[Sale]) -> str:
     report_lines = [
         create_report_header(fields),
         create_horizontal_line(fields),
-        create_item_lines(fields, sales, "sold_by__manager__name"),
+        create_item_lines(fields, sales, "sales_manager"),
         create_horizontal_line(fields),
         create_totals_line(fields, sales, "total"),
     ]
 
     return "\n".join(report_lines)
+
+
+def create_sales_report_view_model(sale: Union[InternalSale, ExternalSale]) -> SaleReportViewModel:
+    report = SaleReportViewModel(
+        sale.time_of_sale,
+        sale.product.name,
+        sale.product.price,
+        sale.quantity,
+        sale.total
+    )
+
+    if isinstance(sale, InternalSale):
+        report.sold_by = sale.sold_by.name
+        report.sales_manager = sale.sold_by.manager.name
+    elif isinstance(sale, ExternalSale):
+        report.sold_by = sale.sold_by.name
+        report.sales_manager = sale.sold_by.contact.name
+    else:
+        raise NotImplementedError()
+
+    return report

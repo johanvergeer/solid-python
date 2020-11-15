@@ -1,11 +1,11 @@
-from datetime import datetime, date
+from datetime import date, datetime
 
 import pytest
 
 from python_solid_principles.jas.formatting import (
     format_amount,
-    format_string,
     format_date,
+    format_string,
 )
 
 

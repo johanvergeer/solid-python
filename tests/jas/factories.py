@@ -1,11 +1,11 @@
-import factory
 import random
 
-from python_solid_principles.jas.employees.entities import (
-    Employee,
-)
+import factory
+
+from python_solid_principles.jas.employees.entities import Employee
 from python_solid_principles.jas.products.entities import Product
-from python_solid_principles.jas.sales.entities import Sale
+from python_solid_principles.jas.resellers.entities import Reseller
+from python_solid_principles.jas.sales.entities import Sale, InternalSale, ExternalSale
 
 
 class ProductFactory(factory.Factory):
@@ -27,6 +27,15 @@ class EmployeeFactory(factory.Factory):
     manager = None
 
 
+class ResellerFactory(factory.Factory):
+    class Meta:
+        model = Reseller
+
+    id_ = factory.Faker("pyint")
+    name = factory.Faker("name")
+    contact = factory.SubFactory(EmployeeFactory)
+
+
 class SaleFactory(factory.Factory):
     class Meta:
         model = Sale
@@ -34,4 +43,15 @@ class SaleFactory(factory.Factory):
     product = factory.SubFactory(ProductFactory)
     quantity = factory.LazyFunction(lambda: random.randint(1, 100))
     time_of_sale = factory.Faker("date_object")
+
+
+class InternalSaleFactory(SaleFactory):
+    class Meta:
+        model = InternalSale
     sold_by = factory.SubFactory(EmployeeFactory)
+
+
+class ExternalSaleFactory(SaleFactory):
+    class Meta:
+        model = ExternalSale
+    sold_by = factory.SubFactory(ResellerFactory)

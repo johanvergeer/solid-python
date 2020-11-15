@@ -1,10 +1,8 @@
-from datetime import datetime
 from pathlib import Path
 
 import pytest
 
 from python_solid_principles.jas.formatting import format_amount, format_string
-from python_solid_principles.jas.sales.entities import Sale
 from python_solid_principles.jas.sales.reports import (
     ReportField,
     create_item_line,
@@ -12,9 +10,10 @@ from python_solid_principles.jas.sales.reports import (
     create_report_header,
     create_sales_report_for_ceo,
     create_sales_report_for_sales_manager,
-    create_totals_line,
+    create_totals_line, create_sales_report_view_model,
 )
-from tests.jas.factories import EmployeeFactory, SaleFactory
+from tests.jas.factories import EmployeeFactory, SaleFactory, InternalSaleFactory, \
+    ExternalSaleFactory
 
 
 class TestCreateReportHeader:
@@ -162,28 +161,28 @@ class TestCreateItemLines:
 
 
 def test_create_sales_report_for_sales_manager():
-    sale_1 = SaleFactory()
-    sale_2 = SaleFactory()
+    manager = EmployeeFactory()
+    sale_1 = InternalSaleFactory(sold_by__manager=manager)
+    sale_2 = ExternalSaleFactory(sold_by__contact=manager)
+
+    view_models = [create_sales_report_view_model(s) for s in [sale_1, sale_2]]
 
     with (Path() / "report.txt").open("w+") as report_file:
-        report_file.write(create_sales_report_for_sales_manager([sale_1, sale_2]))
+        report_file.write(create_sales_report_for_sales_manager(view_models))
 
 
 def test_create_sales_report_for_ceo():
     manager_1 = EmployeeFactory(name="manager_1")
     manager_2 = EmployeeFactory(name="manager_2")
 
-    sale_1: Sale = SaleFactory(
-        product__name="product_1", sold_by__manager=manager_1
-    )
-    sale_2: Sale = SaleFactory(
-        product__name="product_1", sold_by__manager=manager_2
-    )
-    sale_3: Sale = SaleFactory(
-        product__name="product_2", sold_by__manager=manager_1
-    )
+    sales = [
+        InternalSaleFactory(product__name="product_1", sold_by__manager=manager_1),
+        InternalSaleFactory(product__name="product_1", sold_by__manager=manager_2),
+        InternalSaleFactory(product__name="product_2", sold_by__manager=manager_1),
+        ExternalSaleFactory(product__name="product_4"),
+    ]
+
+    view_models = [create_sales_report_view_model(s) for s in sales]
 
     with (Path() / "report.txt").open("w+") as report_file:
-        report_file.write(create_sales_report_for_ceo([sale_1, sale_2, sale_3]))
-
-
+        report_file.write(create_sales_report_for_ceo(view_models))

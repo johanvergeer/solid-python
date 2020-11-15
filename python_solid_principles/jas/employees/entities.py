@@ -18,9 +18,3 @@ class Employee:
     @property
     def manager(self):
         return self.__manager
-
-
-class Reseller(Employee):
-    def __init__(self, id_: int, name: str, contact: Employee) -> None:
-        super(Reseller, self).__init__(id_, name, None)
-        self.contact = contact
