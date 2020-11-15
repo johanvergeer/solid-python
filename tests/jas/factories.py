@@ -5,7 +5,7 @@ import factory
 from python_solid_principles.jas.employees.entities import Employee
 from python_solid_principles.jas.products.entities import Product
 from python_solid_principles.jas.resellers.entities import Reseller
-from python_solid_principles.jas.sales.entities import Sale, InternalSale, ExternalSale
+from python_solid_principles.jas.sales.entities import ExternalSale, InternalSale, Sale
 
 
 class ProductFactory(factory.Factory):
@@ -48,10 +48,12 @@ class SaleFactory(factory.Factory):
 class InternalSaleFactory(SaleFactory):
     class Meta:
         model = InternalSale
+
     sold_by = factory.SubFactory(EmployeeFactory)
 
 
 class ExternalSaleFactory(SaleFactory):
     class Meta:
         model = ExternalSale
+
     sold_by = factory.SubFactory(ResellerFactory)
