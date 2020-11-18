@@ -1,5 +1,5 @@
 class Rectangle:
-    def __init__(self, width: float, height: float):
+    def __init__(self, width: float, height: float) -> None:
         self.width = width
         self.height = height
 
@@ -8,7 +8,7 @@ class Rectangle:
         return self.width * self.height
 
     @property
-    def perimiter(self) -> float:
+    def perimeter(self) -> float:
         return self.width * 2 + self.height * 2
 
 
@@ -21,5 +21,5 @@ class Square:
         return self.side ** 2
 
     @property
-    def perimiter(self):
+    def perimeter(self):
         return self.side * 4

@@ -2,8 +2,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable, List, Optional, Union
 
-from python_solid_principles.jas.formatting import (format_amount, format_any,
-                                                    format_string)
+from python_solid_principles.jas.formatting import (
+    format_amount,
+    format_any,
+    format_string,
+)
 from python_solid_principles.jas.sales.entities import ExternalSale, InternalSale
 
 

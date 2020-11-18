@@ -31,7 +31,7 @@ class RoboDuck:
         print("Walking")
 
     def fly(self):
-        if self.height > 500:
+        if self.height > 120:
             self.land()
         self.height += 1
         print(f"Increased height to {self.height} m")
