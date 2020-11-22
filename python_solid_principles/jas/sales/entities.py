@@ -34,6 +34,16 @@ class Sale(ABC):
     def total(self) -> float:
         return self.__product.price * self.__quantity
 
+    @property
+    @abstractmethod
+    def sold_by_name(self) -> str:
+        ...
+
+    @property
+    @abstractmethod
+    def sold_by_manager_name(self) -> str:
+        ...
+
 
 class InternalSale(Sale):
     def __init__(
@@ -50,6 +60,14 @@ class InternalSale(Sale):
     def sold_by(self) -> Employee:
         return self.__sold_by
 
+    @property
+    def sold_by_name(self) -> str:
+        return self.__sold_by.name
+
+    @property
+    def sold_by_manager_name(self) -> str:
+        return self.__sold_by.manager.name
+
 
 class ExternalSale(Sale):
     def __init__(
@@ -65,3 +83,11 @@ class ExternalSale(Sale):
     @property
     def sold_by(self) -> Reseller:
         return self.__sold_by
+
+    @property
+    def sold_by_name(self) -> str:
+        return self.__sold_by.name
+
+    @property
+    def sold_by_manager_name(self) -> str:
+        return self.__sold_by.contact.name

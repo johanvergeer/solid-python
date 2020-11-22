@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional
 
 from python_solid_principles.jas.formatting import (
     format_amount,
     format_any,
     format_string,
 )
-from python_solid_principles.jas.sales.entities import ExternalSale, InternalSale
+from python_solid_principles.jas.sales.entities import Sale
 
 
 @dataclass
@@ -164,23 +164,14 @@ def create_sales_report_for_ceo(sales: List[SaleReportModel]) -> str:
 
 
 def create_sales_report_view_model(
-    sale: Union[InternalSale, ExternalSale]
+    sale: Sale
 ) -> SaleReportModel:
-    report = SaleReportModel(
+    return SaleReportModel(
         sale.time_of_sale,
         sale.product.name,
         sale.product.price,
         sale.quantity,
         sale.total,
+        sale.sold_by_name,
+        sale.sold_by_manager_name
     )
-
-    if isinstance(sale, InternalSale):
-        report.sold_by = sale.sold_by.name
-        report.sales_manager = sale.sold_by.manager.name
-    elif isinstance(sale, ExternalSale):
-        report.sold_by = sale.sold_by.name
-        report.sales_manager = sale.sold_by.contact.name
-    else:
-        raise NotImplementedError()
-
-    return report
