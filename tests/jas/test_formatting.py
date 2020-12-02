@@ -2,8 +2,11 @@ from datetime import date, datetime
 
 import pytest
 
-from python_solid_principles.jas.formatting import (format_amount, format_date,
-                                                    format_string)
+from python_solid_principles.jas.formatting import (
+    format_amount,
+    format_date,
+    format_string,
+)
 
 
 class TestFormatAmount:

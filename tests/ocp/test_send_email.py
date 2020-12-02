@@ -3,11 +3,15 @@ from unittest.mock import patch
 
 import pytest
 
-from python_solid_principles.ocp.send_email import (SMTP_SSL, User,
-                                                    format_to_plain_text,
-                                                    get_receiver_email_addresses,
-                                                    get_sender_data,
-                                                    read_lines_from_file, send_email)
+from python_solid_principles.ocp.send_email import (
+    SMTP_SSL,
+    User,
+    format_to_plain_text,
+    get_receiver_email_addresses,
+    get_sender_data,
+    read_lines_from_file,
+    send_email,
+)
 
 
 def test_get_file_path():

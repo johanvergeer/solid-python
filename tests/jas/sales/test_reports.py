@@ -4,11 +4,21 @@ import pytest
 
 from python_solid_principles.jas.formatting import format_amount, format_string
 from python_solid_principles.jas.sales.reports import (
-    ReportField, create_item_line, create_item_lines, create_report_header,
-    create_sales_report_for_ceo, create_sales_report_for_sales_manager,
-    create_sales_report_view_model, create_totals_line)
-from tests.jas.factories import (EmployeeFactory, ExternalSaleFactory,
-                                 InternalSaleFactory, SaleFactory)
+    ReportField,
+    create_item_line,
+    create_item_lines,
+    create_report_header,
+    create_sales_report_for_ceo,
+    create_sales_report_for_sales_manager,
+    create_sales_report_view_model,
+    create_totals_line,
+)
+from tests.jas.factories import (
+    EmployeeFactory,
+    ExternalSaleFactory,
+    InternalSaleFactory,
+    SaleFactory,
+)
 
 
 class TestCreateReportHeader:

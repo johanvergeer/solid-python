@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 from typing import List
-from unittest.mock import patch, MagicMock, ANY, Mock, create_autospec
+from unittest.mock import ANY, create_autospec
 
 
 class Invoice:
