@@ -163,9 +163,7 @@ def create_sales_report_for_ceo(sales: List[SaleReportModel]) -> str:
     return "\n".join(report_lines)
 
 
-def create_sales_report_view_model(
-    sale: Sale
-) -> SaleReportModel:
+def create_sales_report_view_model(sale: Sale) -> SaleReportModel:
     return SaleReportModel(
         sale.time_of_sale,
         sale.product.name,
@@ -173,5 +171,5 @@ def create_sales_report_view_model(
         sale.quantity,
         sale.total,
         sale.sold_by_name,
-        sale.sold_by_manager_name
+        sale.sold_by_manager_name,
     )

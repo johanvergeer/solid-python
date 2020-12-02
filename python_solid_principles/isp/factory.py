@@ -39,4 +39,3 @@ class ReportGenerator:
         invoices = self.__storage.find_invoices(start_date, end_date)
 
         # Create report
-
