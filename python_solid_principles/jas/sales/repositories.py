@@ -14,3 +14,15 @@ class SalesRepository(Protocol):
     @abstractmethod
     def add(self, sale: Sale) -> None:
         ...
+
+
+class SalesRepositoryImpl(SalesRepository):
+    def find_from_to_date(self, from_date: date, to_date: date) -> Set[Sale]:
+        pass
+
+    def add(self, sale: Sale) -> None:
+        pass
+
+
+def sales_repository_factory() -> SalesRepository:
+    return SalesRepositoryImpl()
